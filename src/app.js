@@ -7,22 +7,19 @@ const donorRoutes = require("./routes/donor.routes");
 const emergencyRoutes = require("./routes/emergency.routes");
 const { notFound, errorHandler } = require("./middleware/error");
 
-const DNS_SERVERS =
-  process.env.DNS_SERVERS
-    ?.split(",")
-    .map((server) => server.trim())
-    .filter(Boolean) || [
-      "8.8.8.8",
-      "8.8.4.4",
-      "1.1.1.1",
-    ];
+const DNS_SERVERS = process.env.DNS_SERVERS?.split(",")
+  .map((server) => server.trim())
+  .filter(Boolean) || ["8.8.8.8", "8.8.4.4", "1.1.1.1"];
 
 // Configure DNS servers
 dns.setServers(DNS_SERVERS);
 
 const app = express();
 
-const allowedOrigins = (process.env.CLIENT_ORIGIN || "http://localhost:3000")
+const allowedOrigins = (
+  process.env.CLIENT_ORIGIN ||
+  "http://localhost:3000,https://pulse-donate-frontend.vercel.app"
+)
   .split(",")
   .map((origin) => origin.trim());
 
@@ -36,7 +33,7 @@ app.use(
       return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
-  })
+  }),
 );
 
 app.use(express.json({ limit: "1mb" }));
