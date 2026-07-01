@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const dns = require("dns");
 
+const connectDB = require("./config/db");
 const authRoutes = require("./routes/auth.routes");
 const donorRoutes = require("./routes/donor.routes");
 const emergencyRoutes = require("./routes/emergency.routes");
@@ -43,6 +44,15 @@ app.get("/health", (req, res) => {
     status: "ok",
     service: "pulsedonate-api",
   });
+});
+
+app.use("/api", async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
 app.use("/api/auth", authRoutes);
